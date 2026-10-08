@@ -1,0 +1,10 @@
+main { max-width: 640px; margin: 2rem auto; font-family: system-ui, sans-serif; text-align: center; }
+button { margin: 0 0.4rem; padding: 0.6rem 1rem; cursor: pointer; }
+.tarjetas { display: flex; gap: 1rem; margin-top: 1.5rem; }
+.tarjeta { flex: 1; padding: 1rem; border-radius: 8px; color: #fff; }
+.tarjeta h2 { margin: 0; font-size: 2.2rem; }
+.ok { background: #2e7d32; }
+.aviso { background: #f9a825; color: #222; }
+.alerta { background: #c62828; }
+.banner { margin-top: 1.5rem; padding: 0.75rem; background: #ffebee; color: #c62828; border-radius: 6px; }
+.admin { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #ccc; }
