@@ -39,6 +39,17 @@ Los 5 errores intencionales del enunciado, más un problema de compilación.
 - **Causa:** en Spring Cloud AWS 3.1.1, `MessageListenerContainerRegistry.getContainerById` devuelve `MessageListenerContainer<?>` (o `null`), no un `Optional`.
 - **Corrección:** se comprueba si es `null` (método `contenedorOrdenes()`).
 
+### Cómo se comprobó que cada error quedó corregido
+
+| Error | Con el bug habría pasado… | Lo que pasó en nuestras pruebas (evidencia) |
+|---|---|---|
+| 1. DLQ leía la cola principal | "En cola" y "En DLQ" mostrarían siempre el mismo número | Durante la pausa el panel mostró **5 en cola y 2 en DLQ** (`a3-06-panel-5-en-cola-pausado.png`) |
+| 2. Duplicado marcado antes de procesar | La orden 3 se intentaría 1 vez, luego "duplicada" y se perdería | La orden 3 se intentó **3 veces** y llegó a la DLQ (`a2-08-log-intentos-orden-3-y-5.txt`, `a2-13-dlq-cuerpo-orden-3.png`) |
+| 3. Faltaba `max-messages-per-poll` | La app no arrancaría con `max-concurrent-messages=1` | La app arrancó y procesó de a una (`a2-09-log-concurrencia-1-vs-10.txt`) |
+| 4. Id del listener mal escrito | "Pausar" respondería OK pero las órdenes se procesarían igual | Las 5 órdenes quedaron en cola hasta reanudar (`a3-06-…png`, `a3-07-log-pausa-reanudar.txt`) |
+| 5. Borraba de la cola equivocada | `/admin/dlq/reprocesar` daría 500 y la DLQ no se vaciaría | Respondió `{"movidos":4}` y la DLQ bajó de 4 a 2 (`a3-10-…png`, `a3-11-…png`) |
+| Extra: `.ifPresent` no compilaba | `mvnw package` fallaría | Compiló sin errores (BUILD SUCCESS) |
+
 ---
 
 ## Actividad 2 — Resultados esperados
