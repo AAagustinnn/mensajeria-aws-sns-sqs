@@ -1,0 +1,18 @@
+Actividad 3 - Reprocesar la DLQ (backend 8080 reiniciado con mensajeria.simular-fallo=false)
+DLQ antes: 4 mensajes (ordenes 3 y x1 = Cliente 1 / error transitorio; ordenes 5 y x2 = monto -5 / error definitivo)
+
+21:28:12.611 Started MensajeriaAwsApplication in 6.536 seconds (process running for 7.187)
+21:28:26.056 Recibida orden x2 de Cliente 2
+21:28:26.056 Orden x2 descartada: Monto inválido en orden x2
+21:28:26.510 Recibida orden 5 de Cliente 2
+21:28:26.511 Orden 5 descartada: Monto inválido en orden 5
+21:28:26.840 Recibida orden 3 de Cliente 1
+21:28:27.264 Reprocesados 4 mensajes de ordenes-dlq a ordenes-q
+21:28:28.856 Orden 3 procesada
+21:28:29.030 Recibida orden x1 de Cliente 1
+21:28:31.041 Orden x1 procesada
+
+Resultado: POST /admin/dlq/reprocesar -> {"movidos":4}
+ - Orden 3 y x1 (Cliente 1): se PROCESARON. Su error era transitorio y el servicio ya esta disponible.
+ - Orden 5 y x2 (monto -5): VOLVIERON a la DLQ. Su error es definitivo (dato invalido); reprocesar no lo arregla.
+DLQ despues: 2 mensajes (panel: En DLQ = 2).

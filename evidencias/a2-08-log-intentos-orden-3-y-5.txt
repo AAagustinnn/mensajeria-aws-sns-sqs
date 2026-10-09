@@ -1,0 +1,22 @@
+Log backend 8080 - Actividad 2: intentos de las ordenes 3 (transitoria) y 5 (definitiva)
+
+20:49:50.288 INFO c.example.mensajeriaaws.OrdenController: Orden 1 guardada
+20:49:50.674 INFO c.example.mensajeriaaws.OrdenListener: Recibida orden 1 de Cliente 2
+20:49:50.726 INFO c.example.mensajeriaaws.OrdenController: Orden 2 guardada
+20:49:52.679 INFO c.example.mensajeriaaws.ProcesadorOrden: Orden 1 procesada
+20:49:52.742 INFO c.example.mensajeriaaws.ProcesadorOrden: Orden 2 procesada
+20:49:52.747 INFO c.example.mensajeriaaws.OrdenController: Orden 3 guardada
+20:49:53.243 INFO c.example.mensajeriaaws.OrdenController: Orden 4 guardada
+20:49:53.246 ERROR o.a.c.c.C.[.[.[/].[dispatcherServlet]: Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: com.example.mensajeriaaws.ErrorTransitorio: Servicio externo no disponible] with root cause
+20:49:53.259 INFO c.example.mensajeriaaws.OrdenListener: Recibida orden 3 de Cliente 1
+20:49:53.260 ERROR .s.AbstractMessageProcessingPipelineSink: Error processing message b4920ea4-f227-4aec-9ba3-bc1b4c7bc8f6.
+20:49:53.321 INFO c.example.mensajeriaaws.OrdenController: Orden 5 guardada
+20:49:53.493 INFO c.example.mensajeriaaws.OrdenController: Orden 1 guardada
+20:49:53.495 INFO c.example.mensajeriaaws.OrdenListener: Recibida orden 5 de Cliente 2
+20:49:53.496 ERROR c.example.mensajeriaaws.OrdenListener: Orden 5 descartada: Monto inválido en orden 5
+20:49:53.979 INFO c.example.mensajeriaaws.OrdenListener: Recibida orden 1 de Cliente 2
+20:49:53.979 WARN c.example.mensajeriaaws.OrdenListener: Orden 1 duplicada, se ignora
+20:50:03.241 INFO c.example.mensajeriaaws.OrdenListener: Recibida orden 3 de Cliente 1
+20:50:03.242 ERROR .s.AbstractMessageProcessingPipelineSink: Error processing message b4920ea4-f227-4aec-9ba3-bc1b4c7bc8f6.
+20:50:13.244 INFO c.example.mensajeriaaws.OrdenListener: Recibida orden 3 de Cliente 1
+20:50:13.246 ERROR .s.AbstractMessageProcessingPipelineSink: Error processing message b4920ea4-f227-4aec-9ba3-bc1b4c7bc8f6.

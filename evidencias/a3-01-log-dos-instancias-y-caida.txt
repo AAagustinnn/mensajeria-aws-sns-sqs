@@ -1,0 +1,51 @@
+Actividad 3 seccion 1 - Dos consumidores (8080 y 8082) sobre ordenes-q, max-concurrent-messages=1
+Se enviaron 20 ordenes (r1..r20) a la instancia 8080. La 8082 se cerro a mitad del proceso.
+
+== Instancia 8080 ==
+21:13:46.807 Recibida orden r1 de Cliente 2
+21:13:48.820 Orden r1 procesada
+21:13:48.970 Recibida orden r4 de Cliente 2
+21:13:50.975 Orden r4 procesada
+21:13:51.131 Recibida orden r9 de Cliente 2
+21:13:53.139 Orden r9 procesada
+21:13:53.289 Recibida orden r18 de Cliente 2
+21:13:55.298 Orden r18 procesada
+21:13:55.460 Recibida orden r16 de Cliente 2
+21:13:57.465 Orden r16 procesada
+21:13:57.622 Recibida orden r10 de Cliente 2
+21:13:59.635 Orden r10 procesada
+21:13:59.824 Recibida orden r8 de Cliente 2
+21:14:01.839 Orden r8 procesada
+21:14:02.190 Recibida orden r14 de Cliente 2
+21:14:04.197 Orden r14 procesada
+21:14:04.367 Recibida orden r12 de Cliente 2
+21:14:06.371 Orden r12 procesada
+21:14:06.574 Recibida orden r19 de Cliente 2
+21:14:08.584 Orden r19 procesada
+21:14:08.742 Recibida orden r13 de Cliente 2
+21:14:10.747 Orden r13 procesada
+21:14:10.958 Recibida orden r20 de Cliente 2
+21:14:12.961 Orden r20 procesada
+21:14:13.137 Recibida orden r6 de Cliente 2
+21:14:15.150 Orden r6 procesada
+
+== Instancia 8082 ==
+21:13:47.059 Recibida orden r2 de Cliente 2
+21:13:49.071 Orden r2 procesada
+21:13:49.234 Recibida orden r3 de Cliente 2
+21:13:51.243 Orden r3 procesada
+21:13:51.399 Recibida orden r11 de Cliente 2
+21:13:53.407 Orden r11 procesada
+21:13:53.559 Recibida orden r15 de Cliente 2
+21:13:55.563 Orden r15 procesada
+21:13:55.723 Recibida orden r5 de Cliente 2
+21:13:57.731 Orden r5 procesada
+21:13:57.895 Recibida orden r7 de Cliente 2
+21:13:59.900 Orden r7 procesada
+21:14:00.058 Recibida orden r17 de Cliente 2
+21:14:02.074 Orden r17 procesada
+21:14:02.242 Recibida orden r6 de Cliente 2
+
+Conclusion: la 8082 recibio r6 a las 21:14:02.242 y se detuvo sin confirmarla.
+Al vencer el visibility timeout (10 s) SQS la hizo visible de nuevo y la 8080 la proceso (21:14:13.137 -> 21:14:15.150).
+8080 proceso 13 ordenes, 8082 proceso 7 => 20/20, ninguna orden perdida.

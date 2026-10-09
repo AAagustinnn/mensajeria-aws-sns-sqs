@@ -14,9 +14,9 @@ case "$1" in
   reanudar)
     curl -X POST $API/admin/listener/reanudar; echo ;;
   dlq-llenar)   # con mensajeria.simular-fallo=true
-    curl -X POST $API/ordenes -H "$H" -d '{"id":"r1","cliente":"Cliente 1","monto":5000}'; echo
-    curl -X POST $API/ordenes -H "$H" -d '{"id":"r2","cliente":"Cliente 2","monto":-5}'; echo
-    echo "Espera ~30-40 s (3 intentos x visibility 10 s) a que r1 llegue a la DLQ." ;;
+    curl -X POST $API/ordenes -H "$H" -d '{"id":"x1","cliente":"Cliente 1","monto":5000}'; echo
+    curl -X POST $API/ordenes -H "$H" -d '{"id":"x2","cliente":"Cliente 2","monto":-5}'; echo
+    echo "Espera ~30-40 s (3 intentos x visibility 10 s) a que x1 llegue a la DLQ." ;;
   dlq-reprocesar)  # despues de poner simular-fallo=false y reiniciar
     curl -X POST $API/admin/dlq/reprocesar; echo ;;
   *) echo "uso: $0 colas|pausa|reanudar|dlq-llenar|dlq-reprocesar" ;;

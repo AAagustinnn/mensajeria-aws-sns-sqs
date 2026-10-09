@@ -24,6 +24,6 @@ switch ($Caso) {
   }
   "pausa"    { Invoke-RestMethod -Method Post "$API/admin/listener/pausar"; 1..5 | ForEach-Object { Orden "p$_" "Cliente 2" 1000 } }
   "reanudar" { Invoke-RestMethod -Method Post "$API/admin/listener/reanudar" }
-  "dlq-llenar"     { Orden "r1" "Cliente 1" 5000; Orden "r2" "Cliente 2" -5 }
+  "dlq-llenar"     { Orden "x1" "Cliente 1" 5000; Orden "x2" "Cliente 2" -5 }
   "dlq-reprocesar" { Invoke-RestMethod -Method Post "$API/admin/dlq/reprocesar" }
 }

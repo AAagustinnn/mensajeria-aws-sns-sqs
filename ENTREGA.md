@@ -61,30 +61,40 @@ Los 5 errores intencionales del enunciado, más un problema de compilación.
 3. **Transitorio vs. definitivo.** El **transitorio** no se captura: el mensaje no se confirma, reaparece tras el visibility timeout y se reintenta. A la 3.ª recepción SQS lo mueve a la DLQ. El **definitivo** se captura, se envía directo a la DLQ y se confirma en el primer intento. Conviene distinguirlos porque reintentar un dato inválido nunca funciona: solo gasta recursos y retrasa la alerta. Un fallo temporal, en cambio, puede resolverse solo.
 4. **¿El mensaje expirado de `prueba-ttl-q` fue a la DLQ?** **No.** La DLQ solo recibe mensajes que superan `maxReceiveCount`, es decir, que se recibieron y no se borraron. Un mensaje que expira por retención se elimina sin pasar por la DLQ.
 5. **Centralizar nombres en `application.properties`.** Se cambian en un solo lugar y sin recompilar. Permiten usar otros valores por entorno (perfiles, variables de entorno) y evitan errores de tipeo repartidos por el código, como el Error 4.
-6. **Efecto de `max-concurrent-messages`.** Con **1**, las órdenes se procesan una tras otra: 10 órdenes × 2 s ≈ **20 s**. Con **10**, se procesan en paralelo y el lote termina en ≈ **2–3 s**. Más concurrencia da más throughput, pero también más carga simultánea sobre el servicio que procesa.
+6. **Efecto de `max-concurrent-messages`.** Medido en nuestra prueba (10 órdenes de 2 s cada una):
+   - Con **1**: se procesan de a una (c1 → c2 → c9 → c3 …, cada ~2,2 s) → **~23 s** en total.
+   - Con **10**: varias en paralelo (d4, d5 y d7 terminaron en el mismo milisegundo) → **~13,4 s** en total.
+   No llegó al ideal (~2 s) porque las órdenes llegan escalonadas y cada poll de SQS devuelve solo los mensajes ya disponibles, así que el paralelismo real fue de 2–3 a la vez. Más concurrencia = más throughput, a costa de más carga simultánea sobre el servicio que procesa.
 
 ## Respuestas — Actividad 3
 
-1. **¿Se perdió alguna orden al detener una instancia?** **No.** Los mensajes que la instancia detenida tenía en proceso nunca se confirmaron (borraron). Cuando vence su visibility timeout (10 s), vuelven a quedar visibles y la otra instancia los procesa. SQS garantiza entrega *at-least-once*. Por eso una orden podría procesarse dos veces, y el control de duplicados en memoria es por instancia.
+1. **¿Se perdió alguna orden al detener una instancia?** **No.** En nuestra prueba la 8082 recibió la orden `r6` (21:14:02) y se cerró antes de terminarla; 10 s después (visibility timeout) la 8080 la recibió y la procesó (21:14:13 → 21:14:15). Resultado: 8080 procesó 13, 8082 procesó 7 → 20/20. Los mensajes que la instancia detenida tenía en proceso nunca se confirmaron (borraron). Cuando vence su visibility timeout (10 s), vuelven a quedar visibles y la otra instancia los procesa. SQS garantiza entrega *at-least-once*. Por eso una orden podría procesarse dos veces, y el control de duplicados en memoria es por instancia.
 2. **¿Por qué no hace falta un cluster?** SQS es un servicio administrado (serverless): AWS se encarga del almacenamiento, la replicación, la alta disponibilidad y el escalado de la cola. Nosotros solo escalamos los consumidores, levantando más instancias de la app.
 3. **Mensajes con el listener pausado.** Quedan en la cola como *disponibles* ("En cola" en el panel), sin procesarse. Se conservan hasta el retention period de `ordenes-q` (por defecto 4 días). Si se reanuda antes, se procesan con normalidad.
 4. **¿Por qué un servicio y no varios controllers?** La lógica de SQS queda en un solo lugar. `EstadoController` y `AdminController` la reutilizan, los controllers solo exponen HTTP y no dependen del SDK, y es más fácil de probar (se puede simular el servicio). Un cambio, como el nombre del listener o el SDK, se hace una sola vez.
-5. **¿Por qué una orden reprocesada volvió a la DLQ?** Con `simular-fallo=false`, la orden de **Cliente 1** se procesa bien, porque su fallo era transitorio. La de **monto -5** vuelve a la DLQ: su error es **definitivo**, el dato es inválido y reprocesarlo no lo arregla. Por eso se lanza de nuevo `ErrorDefinitivo`.
+5. **¿Por qué una orden reprocesada volvió a la DLQ?** (Resultado real: `{"movidos":4}` → órdenes 3 y x1 procesadas; 5 y x2 de vuelta en la DLQ, que quedó con 2.) Con `simular-fallo=false`, la orden de **Cliente 1** se procesa bien, porque su fallo era transitorio. La de **monto -5** vuelve a la DLQ: su error es **definitivo**, el dato es inválido y reprocesarlo no lo arregla. Por eso se lanza de nuevo `ErrorDefinitivo`.
 
 ---
 
-## Checklist de evidencias (capturas que tienes que tomar)
+## Evidencias (carpeta `evidencias/`)
 
 **Actividad 2**
-- [ ] Tiempos de `/ordenes` y `/ordenes/sync`, más el 500 de la orden 4
-- [ ] Log con los 3 intentos de la orden 3 y el único intento de la orden 5
-- [ ] `ordenes-dlq` → *Poll for messages* con las órdenes 3 y 5
-- [ ] Alarma `dlq-ordenes-con-mensajes` en *In alarm* y el correo recibido
-- [ ] Panel con la tarjeta DLQ en rojo
-- [ ] Tiempos de concurrencia con 1 y con 10
+| Entregable | Archivo |
+|---|---|
+| Infraestructura creada | `a2-01-infra-creada.png`, `a2-12-ordenes-q-dlq-max-receives-3.png` |
+| Experimento TTL (expira y no va a la DLQ) | `a2-02-ttl-expirado-no-va-a-dlq.png` |
+| 1. Tiempos `/ordenes` vs `/ordenes/sync` y 500 al fallar | `a2-03-tiempos-ordenes-vs-sync.png` |
+| 2. Log de intentos órdenes 3 y 5 | `a2-08-log-intentos-orden-3-y-5.txt` |
+| 3. `ordenes-dlq` con ambos mensajes | `a2-05-dlq-mensajes.png`, `a2-13-dlq-cuerpo-orden-3.png` |
+| 4. Alarma *In alarm* y correo | `a2-00-suscripcion-confirmada.png`, `a2-06-alarma-en-alarma.png`, `a2-07-correo-alarma.png` |
+| 5. Panel con DLQ en rojo | `a2-04-panel-dlq-rojo.png` |
+| Concurrencia 1 vs 10 | `a2-09-log-concurrencia-1-vs-10.txt`, `a2-10-…`, `a2-11-…` |
 
 **Actividad 3**
-- [ ] Logs de las instancias 8080 y 8082 repartiéndose las 20 órdenes, y la que sigue al detener la otra
-- [ ] Consola SQS con `cliente-101-q` creada y luego eliminada
-- [ ] Panel con 5 órdenes "En cola" durante la pausa
-- [ ] Respuesta `{"movidos":2}` y log: r1 procesada, r2 de vuelta en la DLQ
+| Entregable | Archivo |
+|---|---|
+| 1. Dos instancias, reparto y caída de una | `a3-01-log-dos-instancias-y-caida.txt` |
+| 2. Cola creada y eliminada desde la API | `a3-02-cola-cliente-101-creada.png`, `a3-03-api-crear-eliminar-cola.png`, `a3-04-cola-cliente-101-eliminada.png` |
+| 3. Panel con órdenes acumuladas en pausa | `a3-05-pausar-y-enviar-5.png`, `a3-06-panel-5-en-cola-pausado.png`, `a3-07-log-pausa-reanudar.txt` |
+| 4. Resultado del reprocesamiento | `a3-09-llenar-dlq-x1-x2.png`, `a3-10-reprocesar-movidos-4.png`, `a3-11-panel-dlq-2-tras-reprocesar.png`, `a3-08-log-reprocesar-dlq.txt` |
+| 5. Errores encontrados | Sección "Errores encontrados" de este documento |

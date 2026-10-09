@@ -1,0 +1,57 @@
+Actividad 2 seccion 7 - Concurrencia (equivalente a prefetch)
+
+== max-concurrent-messages=1 (ordenes c1..c10) ==
+20:57:49.686 Orden c1 guardada
+20:57:50.191 Orden c2 guardada
+20:57:50.392 Orden c3 guardada
+20:57:50.554 Orden c4 guardada
+20:57:50.712 Orden c5 guardada
+20:57:50.869 Orden c6 guardada
+20:57:51.028 Orden c7 guardada
+20:57:51.186 Orden c8 guardada
+20:57:51.344 Orden c9 guardada
+20:57:51.520 Orden c10 guardada
+20:57:52.186 Orden c1 procesada
+20:57:54.371 Orden c2 procesada
+20:57:56.536 Orden c9 procesada
+20:57:56.697 Orden c1 guardada
+20:57:57.136 Orden c2 guardada
+20:57:57.272 Orden c3 guardada
+20:57:57.578 Orden c4 guardada
+20:57:57.713 Orden c5 guardada
+20:57:57.848 Orden c6 guardada
+20:57:57.999 Orden c7 guardada
+20:57:58.138 Orden c8 guardada
+20:57:58.298 Orden c9 guardada
+20:57:58.443 Orden c10 guardada
+20:57:58.879 Orden c3 procesada
+20:58:01.013 Orden c4 procesada
+20:58:03.154 Orden c10 procesada
+20:58:05.305 Orden c7 procesada
+20:58:08.032 Orden c5 procesada
+20:58:10.362 Orden c8 procesada
+20:58:12.553 Orden c6 procesada
+
+== max-concurrent-messages=10 (ordenes d1..d10) ==
+21:00:54.389 Orden d1 guardada
+21:00:54.732 Orden d2 guardada
+21:00:54.881 Orden d3 guardada
+21:00:55.038 Orden d4 guardada
+21:00:55.188 Orden d5 guardada
+21:00:55.337 Orden d6 guardada
+21:00:55.490 Orden d7 guardada
+21:00:55.639 Orden d8 guardada
+21:00:55.797 Orden d9 guardada
+21:00:55.960 Orden d10 guardada
+21:00:56.749 Orden d1 procesada
+21:00:58.925 Orden d2 procesada
+21:00:58.925 Orden d10 procesada
+21:01:01.111 Orden d3 procesada
+21:01:01.111 Orden d9 procesada
+21:01:03.338 Orden d8 procesada
+21:01:05.555 Orden d5 procesada
+21:01:05.555 Orden d4 procesada
+21:01:05.555 Orden d7 procesada
+21:01:07.750 Orden d6 procesada
+
+Resumen: con 1 -> ~23 s (de a una, cada ~2,2 s). Con 10 -> ~13,4 s (hasta 3 ordenes terminando al mismo instante).

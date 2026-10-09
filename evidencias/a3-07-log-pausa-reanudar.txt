@@ -1,0 +1,24 @@
+Actividad 3 - Pausar y reanudar el listener (instancia 8080)
+
+21:21:03.633 Container procesador-ordenes stopped
+21:21:03.634 Listener procesador-ordenes pausado
+21:21:03.701 Orden p1 guardada
+21:21:03.860 Orden p2 guardada
+21:21:04.280 Orden p3 guardada
+21:21:04.437 Orden p4 guardada
+21:21:04.591 Orden p5 guardada
+21:21:53.564 Container procesador-ordenes started
+21:21:53.565 Listener procesador-ordenes reanudado
+21:21:53.712 Recibida orden p2 de Cliente 2
+21:21:55.721 Orden p2 procesada
+21:21:56.169 Recibida orden p5 de Cliente 2
+21:21:58.175 Orden p5 procesada
+21:21:58.336 Recibida orden p1 de Cliente 2
+21:22:00.345 Orden p1 procesada
+21:22:00.501 Recibida orden p3 de Cliente 2
+21:22:02.506 Orden p3 procesada
+21:22:02.676 Recibida orden p4 de Cliente 2
+21:22:04.681 Orden p4 procesada
+
+Conclusion: entre 21:21:03 y 21:21:53 el listener estuvo detenido; las 5 ordenes quedaron en ordenes-q (panel: 5 en cola).
+Al reanudar se procesaron una por una (max-concurrent-messages=1). No se perdio ninguna: SQS las conserva hasta el retention period (4 dias por defecto).
